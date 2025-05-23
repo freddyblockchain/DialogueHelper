@@ -1,0 +1,5 @@
+# Exclude potential configuration files you don't want to share
+local.properties
+
+# Exclude any directories you might use for temporary or private data
+temp_files/
