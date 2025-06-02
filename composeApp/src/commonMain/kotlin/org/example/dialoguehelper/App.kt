@@ -5,11 +5,15 @@ import Saving.writeSaveDataToFile
 import Sentence.CreateNewSentenceDialog
 import Sentence.SentenceView
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -63,27 +68,17 @@ fun App(iconProvider: IconProvider, saveProvider: SaveProvider) {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+            Row(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+                CharactersView(characters, {})
             }
-            LazyColumn {
-                for(character in characters){
-                    item() {
-                        Text(character.name)
-                    }
-                }
-            }
-            if(!isToggled){
-                IconButton(
-                    onClick = { isToggled = !isToggled }
+            if (!isToggled) {
+
+                FloatingActionButton(
+                    onClick = { isToggled = !isToggled },
                 ) {
                     Icon(
-                        imageVector = if (isToggled) {
-                            iconProvider.addIcon()
-                        } else {
-                            iconProvider.addIconFilled()
-                        },
-                        contentDescription = if (isToggled) "Selected icon button" else "Unselected icon button."
+                        imageVector = iconProvider.addIcon(), // Assuming this returns an ImageVector
+                        contentDescription = "Add Character" // Provide a meaningful description
                     )
                 }
             }
@@ -105,19 +100,23 @@ fun App(iconProvider: IconProvider, saveProvider: SaveProvider) {
                 )
             }
 
-            Button(onClick = {newSentenceToggle = !newSentenceToggle } ){
+            Button(onClick = { newSentenceToggle = !newSentenceToggle }) {
                 Text("Create New Sentence")
             }
 
-            if(newSentenceToggle){
-                CreateNewSentenceDialog(onDismissRequest = {newSentenceToggle = false},  onSentenceCreated = { newSentence ->
-                    sentences.add(newSentence)
+            if (newSentenceToggle) {
+                CreateNewSentenceDialog(
+                    onDismissRequest = { newSentenceToggle = false },
+                    onSentenceCreated = { newSentence ->
+                        sentences.add(newSentence)
 
-                    // Launch coroutine to save data asynchronously
-                    coroutineScope.launch {
-                        updateSaveFile(sentences, characters)
-                    }
-                }, availableCharacters = characters)
+                        // Launch coroutine to save data asynchronously
+                        coroutineScope.launch {
+                            updateSaveFile(sentences, characters)
+                        }
+                    },
+                    availableCharacters = characters
+                )
             }
 
 
@@ -130,7 +129,7 @@ fun App(iconProvider: IconProvider, saveProvider: SaveProvider) {
     }
 }
 
-suspend fun updateSaveFile(sentences: List<Sentence>, characters: List<Character>){
+suspend fun updateSaveFile(sentences: List<Sentence>, characters: List<Character>) {
     val saveData = SaveData()
     saveData.sentences = sentences
     saveData.characters = characters
