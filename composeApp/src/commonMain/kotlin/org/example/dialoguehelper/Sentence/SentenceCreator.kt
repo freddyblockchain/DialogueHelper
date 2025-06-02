@@ -1,4 +1,4 @@
-package Sentence
+package org.example.dialoguehelper.Sentence
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu

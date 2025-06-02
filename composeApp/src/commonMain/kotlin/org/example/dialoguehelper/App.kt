@@ -1,9 +1,10 @@
 package org.example.dialoguehelper
 
-import Saving.readSaveDataFromFile
-import Saving.writeSaveDataToFile
-import Sentence.CreateNewSentenceDialog
-import Sentence.SentenceView
+import ProviderManager
+import org.example.dialoguehelper.Saving.readSaveDataFromFile
+import org.example.dialoguehelper.Saving.writeSaveDataToFile
+import org.example.dialoguehelper.Sentence.CreateNewSentenceDialog
+import org.example.dialoguehelper.Sentence.SentenceView
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -23,10 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import org.example.dialoguehelper.Managers.DataManager.Companion.characters
+import org.example.dialoguehelper.Managers.DataManager.Companion.sentences
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 import org.example.dialoguehelper.Models.Character
@@ -38,17 +40,13 @@ import org.example.dialoguehelper.Providers.SaveProvider
 fun getHomeIcon(iconProvider: IconProvider): ImageVector {
     return iconProvider.addIcon()
 }
-
-lateinit var saveProvider: SaveProvider
-
 @Composable
 @Preview
 fun App(iconProvider: IconProvider, saveProvider: SaveProvider) {
-    org.example.dialoguehelper.saveProvider = saveProvider
-    val openAlertDialog = remember { mutableStateOf(false) }
+    ProviderManager.saveProvider = saveProvider
+    ProviderManager.iconProvider = iconProvider
 
-    val characters = remember { mutableStateListOf<Character>() }
-    val sentences = remember { mutableStateListOf<Sentence>() }
+    val navController = rememberNavController()
 
     LaunchedEffect(Unit) {
         val saveData = readSaveDataFromFile() // suspend function
@@ -56,11 +54,7 @@ fun App(iconProvider: IconProvider, saveProvider: SaveProvider) {
         sentences.addAll(saveData.sentences)
     }
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        // isToggled initial value should be read from a view model or persistent storage.
         var isToggled by remember { mutableStateOf(false) }
-
-        var newSentenceToggle by remember { mutableStateOf(false) }
 
         Column(
             modifier = Modifier
@@ -99,6 +93,8 @@ fun App(iconProvider: IconProvider, saveProvider: SaveProvider) {
                     }
                 )
             }
+
+            var newSentenceToggle by remember { mutableStateOf(false) }
 
             Button(onClick = { newSentenceToggle = !newSentenceToggle }) {
                 Text("Create New Sentence")

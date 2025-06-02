@@ -1,4 +1,4 @@
-package Sentence
+package org.example.dialoguehelper.Sentence
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
