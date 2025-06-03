@@ -16,10 +16,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
@@ -28,12 +28,12 @@ import org.example.dialoguehelper.CreateNewCharacterDialog
 import org.example.dialoguehelper.Managers.DataManager
 import org.example.dialoguehelper.Managers.DataManager.Companion.characters
 import org.example.dialoguehelper.Managers.DataManager.Companion.sentences
-import org.example.dialoguehelper.Models.Character
+import org.example.dialoguehelper.Navigation.characterScreen
 import org.example.dialoguehelper.Saving.readSaveDataFromFile
 import org.example.dialoguehelper.updateSaveFile
 
 @Composable
-fun CharactersScreen(){
+fun CharacterOverviewScreen(navController: NavController) {
     var isToggled by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -49,13 +49,13 @@ fun CharactersScreen(){
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
-            CharactersView(DataManager.characters, {})
+            CharactersView(DataManager.characters, {navController.navigate(characterScreen)})
         }
         if (!isToggled) {
 
             FloatingActionButton(
                 onClick = { isToggled = !isToggled },
-            ) {s
+            ) {
                 Icon(
                     imageVector = ProviderManager.iconProvider.addIcon(), // Assuming this returns an ImageVector
                     contentDescription = "Add Character" // Provide a meaningful description
@@ -80,3 +80,4 @@ fun CharactersScreen(){
             )
         }
     }
+}

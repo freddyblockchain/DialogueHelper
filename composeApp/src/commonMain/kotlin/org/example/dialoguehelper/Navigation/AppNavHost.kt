@@ -1,16 +1,15 @@
 package org.example.dialoguehelper.Navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import org.example.dialoguehelper.CharactersView
+import org.example.dialoguehelper.Screens.CharacterOverviewScreen
+import org.example.dialoguehelper.Screens.CharacterSpecificScreen
 
 val startScreen = "STARTSCREEN"
 val characterScreen = "CHARACTERSCREEN"
@@ -20,11 +19,12 @@ fun AppNavHost(navController: NavHostController) {
         navController = navController,
         startDestination = startScreen,
         modifier = Modifier.fillMaxSize()
-            .verticalScroll(rememberScrollState())
     ) {
         composable(startScreen) {
+            CharacterOverviewScreen(navController)
         }
         composable(characterScreen) {
-            CharacterScreen(navController)
+            CharacterSpecificScreen(navController)
+        }
     }
 }

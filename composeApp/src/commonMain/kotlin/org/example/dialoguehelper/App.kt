@@ -34,6 +34,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.example.dialoguehelper.Models.Character
 import org.example.dialoguehelper.Models.SaveData
 import org.example.dialoguehelper.Models.Sentence
+import org.example.dialoguehelper.Navigation.AppNavHost
+import org.example.dialoguehelper.Navigation.startScreen
 import org.example.dialoguehelper.Providers.IconProvider
 import org.example.dialoguehelper.Providers.SaveProvider
 
@@ -48,82 +50,10 @@ fun App(iconProvider: IconProvider, saveProvider: SaveProvider) {
 
     val navController = rememberNavController()
 
-    LaunchedEffect(Unit) {
-        val saveData = readSaveDataFromFile() // suspend function
-        characters.addAll(saveData.characters) // assuming saveData is a List<Character>
-        sentences.addAll(saveData.sentences)
-    }
     MaterialTheme {
-        var isToggled by remember { mutableStateOf(false) }
-
-        Column(
-            modifier = Modifier
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Row(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
-                CharactersView(characters, {})
-            }
-            if (!isToggled) {
-
-                FloatingActionButton(
-                    onClick = { isToggled = !isToggled },
-                ) {
-                    Icon(
-                        imageVector = iconProvider.addIcon(), // Assuming this returns an ImageVector
-                        contentDescription = "Add Character" // Provide a meaningful description
-                    )
-                }
-            }
-            val coroutineScope = rememberCoroutineScope()
-
-            if (isToggled) {
-                CreateNewCharacterDialog(
-                    onDismissRequest = {
-                        isToggled = false
-                    },
-                    onCharacterCreated = { newCharacter ->
-                        isToggled = false
-                        characters.add(newCharacter)
-
-                        coroutineScope.launch(Dispatchers.IO) {
-                            updateSaveFile(sentences, characters)
-                        }
-                    }
-                )
-            }
-
-            var newSentenceToggle by remember { mutableStateOf(false) }
-
-            Button(onClick = { newSentenceToggle = !newSentenceToggle }) {
-                Text("Create New Sentence")
-            }
-
-            if (newSentenceToggle) {
-                CreateNewSentenceDialog(
-                    onDismissRequest = { newSentenceToggle = false },
-                    onSentenceCreated = { newSentence ->
-                        sentences.add(newSentence)
-
-                        // Launch coroutine to save data asynchronously
-                        coroutineScope.launch {
-                            updateSaveFile(sentences, characters)
-                        }
-                    },
-                    availableCharacters = characters
-                )
-            }
-
-
-            LazyColumn {
-                items(sentences) { sentence ->
-                    SentenceView(sentence)
-                }
-            }
+            AppNavHost(navController)
         }
     }
-}
 
 suspend fun updateSaveFile(sentences: List<Sentence>, characters: List<Character>) {
     val saveData = SaveData()

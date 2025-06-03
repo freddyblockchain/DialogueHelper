@@ -1,0 +1,27 @@
+ /*var newSentenceToggle by remember { mutableStateOf(false) }
+
+            Button(onClick = { newSentenceToggle = !newSentenceToggle }) {
+                Text("Create New Sentence")
+            }
+
+            if (newSentenceToggle) {
+                CreateNewSentenceDialog(
+                    onDismissRequest = { newSentenceToggle = false },
+                    onSentenceCreated = { newSentence ->
+                        sentences.add(newSentence)
+
+                        // Launch coroutine to save data asynchronously
+                        coroutineScope.launch {
+                            updateSaveFile(sentences, characters)
+                        }
+                    },
+                    availableCharacters = characters
+                )
+            }
+
+
+            LazyColumn {
+                items(sentences) { sentence ->
+                    SentenceView(sentence)
+                }
+            }/*
