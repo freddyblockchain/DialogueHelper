@@ -6,8 +6,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import androidx.navigation.toRoute
+import org.example.dialoguehelper.Models.Character
 import org.example.dialoguehelper.Screens.CharacterOverviewScreen
 import org.example.dialoguehelper.Screens.CharacterSpecificScreen
 
@@ -23,8 +27,9 @@ fun AppNavHost(navController: NavHostController) {
         composable(startScreen) {
             CharacterOverviewScreen(navController)
         }
-        composable(characterScreen) {
-            CharacterSpecificScreen(navController)
+        composable<Character> { backStackEntry ->
+            val character: Character = backStackEntry.toRoute()
+            CharacterSpecificScreen(navController, character)
         }
     }
 }

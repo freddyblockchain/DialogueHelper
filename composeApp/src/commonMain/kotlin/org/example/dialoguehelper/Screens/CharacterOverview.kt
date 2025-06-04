@@ -49,7 +49,7 @@ fun CharacterOverviewScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
-            CharactersView(DataManager.characters, {navController.navigate(characterScreen)})
+            CharactersView(DataManager.characters, {navController.navigate(it)})
         }
         if (!isToggled) {
 
